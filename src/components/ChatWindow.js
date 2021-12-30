@@ -1,4 +1,5 @@
 import React from 'react'
+import EmojiPicker from 'emoji-picker-react'
 import './ChatWindow.css'
 
 import SearchIcon from '@material-ui/icons/Search';
@@ -10,8 +11,65 @@ import SendIcon from '@material-ui/icons/Send';
 import MicIcon from '@material-ui/icons/Mic';
 
 import bgMsg from '../assets/images/bgMsg.jpg'
+import MessageItem from './MessageItem'
 
-export default () => {
+export default ({ user }) => {
+  
+  const body = React.useRef()
+
+  let recognition = null;
+  let speechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+  if (speechRecognition) {
+    recognition = new speechRecognition()
+  }
+
+  const [emojiOpen, setEmojiOpen]  = React.useState(false)
+  const [listening, setListening]  = React.useState(false)
+  const [text, setText]  = React.useState('')
+  const [list, setList]  = React.useState([{body:'oi', author: '123'}, {body: 'Silas', author: '123'}, {body:'oi oi oi', author: '1234'},{body:'oi', author: '123'}, {body: 'Silas', author: '123'}, {body:'oi oi oi', author: '1234'},{body:'oi', author: '123'}, {body: 'Silas', author: '123'}, {body:'oi oi oi', author: '1234'},{body:'oi', author: '123'}, {body: 'Silas', author: '123'}, {body:'oi oi oi', author: '1234'},{body:'oi', author: '123'}, {body: 'Silas', author: '123'}, {body:'oi oi oi', author: '1234'},{body:'oi', author: '123'}, {body: 'Silas', author: '123'}, {body:'oi oi oi', author: '1234'},{body:'oi', author: '123'}, {body: 'Silas', author: '123'}, {body:'oi oi oi', author: '1234'},{body:'oi', author: '123'}, {body: 'Silas', author: '123'}, {body:'oi oi oi', author: '1234'},{body:'oi', author: '123'}, {body: 'Silas', author: '123'}, {body:'oi oi oi', author: '1234'},{body:'oi', author: '123'}, {body: 'Silas', author: '123'}, {body:'oi oi oi', author: '1234'},{body:'oi', author: '123'}, {body: 'Silas', author: '123'}, {body:'oi oi oi', author: '1234'},{body:'oi', author: '123'}, {body: 'Silas', author: '123'}, {body:'oi oi oi', author: '1234'},{body:'oi', author: '123'}, {body: 'Silas', author: '123'}, {body:'oi oi oi', author: '1234'},{body:'oi', author: '123'}, {body: 'Silas', author: '123'}, {body:'oi oi oi', author: '1234'},{body:'oi', author: '123'}, {body: 'Silas', author: '123'}, {body:'oi oi oi', author: '1234'}])
+
+
+  React.useEffect(() => {
+    if (body.current.scrollHeight > body.current.offsetHeight) {
+      body.current.scrollTop = body.current.scrollHeight - body.current.offsetHeight
+    }
+  },[list])
+
+  const handleEmojiClick = (e, emojiObject) => {
+    setText(text + emojiObject.emoji)
+  }
+  const handleOpenEmoji = () => {
+    setEmojiOpen(true)
+  }
+  const handleCloseEmoji = () => {
+    setEmojiOpen(false)
+  }
+
+  const handleSendClick = () => {
+    setEmojiOpen(false)
+  }
+  
+  const handleMicClick = () => {
+    if (recognition !== null) {
+      
+      recognition.onstart = () => {
+        setListening(true)
+      }
+
+      recognition.onend = () => {
+        setListening(false)
+      }
+      
+      recognition.onresult = (e) => {
+        setText(e.results[0][0].transcript)
+      }
+
+      recognition.start()
+
+    }
+  }
+
   return (
     <div className="chatWindow">
       <div className="chatWindow--header">
@@ -32,13 +90,45 @@ export default () => {
           </div>
         </div>
       </div>
-      <div className="chatWindow--body">
-
+      <div
+        ref={body}
+        className="chatWindow--body"
+      >
+        {list.map((item, k) => (
+          <MessageItem
+            key={k.toString()}
+            data={item}
+            user={user}
+          />
+        ))}
       </div>
+
+      <div
+        className="chatWindow--emojiarea"
+        style={{height: emojiOpen ? '200px':'0px'}}
+      >
+        <EmojiPicker
+          onEmojiClick={handleEmojiClick}
+          disableSearchBar
+          disableSkinTonePicker
+        />
+      </div>
+
       <div style={{backgroundImage: `url (${bgMsg})`}} className="chatWindow--footer">
         <div className="chatWindow--pre">
-          <div className="chatWindow--btn">
-            <InsertEmoticonIcon style={{color:'#919191'}} />
+          <div
+            onClick={handleCloseEmoji}
+            className="chatWindow--btn"
+            style={{width: emojiOpen ? 40 : 0}}
+          >
+            
+            <CloseIcon style={{color:'#919191'}} />
+          </div>
+          <div
+             onClick={ handleOpenEmoji }
+            className="chatWindow--btn"
+          >
+            <InsertEmoticonIcon style={{color: emojiOpen ? '#009688' : '#919191'}} />
           </div>
         </div>
         <div className="chatWindow--inputarea">
@@ -46,12 +136,28 @@ export default () => {
             className="chatWindow--input"
             type="text"
             placeholder="Digite uma mensagem"
+            value={text}
+            onChange={(e) => setText(e.target.value)}
           />
             </div>
         <div className="chatWindow--pos">
-          <div className="chatWindow--btn">
+
+          {text === '' ? (
+            <div
+              onClick={handleMicClick}
+              className="chatWindow--btn"
+            >
+              <MicIcon style={{ color: listening ? '#126ece' : '#919191' }} />
+          </div>
+          ): (
+              <div
+                onClick={handleSendClick}
+                className="chatWindow--btn">
             <SendIcon style={{color:'#919191'}} />
           </div>
+          )}
+
+
             </div>
       </div>
     </div>
