@@ -8,6 +8,7 @@ export default ({onReceive}) => {
     let result = api.fbPopup();
 
     if (result) {
+      console.log(result)
       onReceive(result.user)
     } else {
       console.log('errou!')
