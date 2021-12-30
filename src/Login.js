@@ -5,7 +5,7 @@ import api from './api'
 export default ({onReceive}) => {
 
   const handleFacebookLogin = async () => {
-    let result = api.fbPopup();
+    let result = await api.fbPopup();
 
     if (result) {
       console.log(result)
