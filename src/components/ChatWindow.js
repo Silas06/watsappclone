@@ -13,9 +13,12 @@ import MicIcon from '@material-ui/icons/Mic';
 import bgMsg from '../assets/images/bgMsg.jpg'
 import MessageItem from './MessageItem'
 
-export default ({ user }) => {
+import api from '../api'
+
+export default ({ user, data }) => {
   
   const body = React.useRef()
+  const input = React.useRef()
 
   let recognition = null;
   let speechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -27,14 +30,25 @@ export default ({ user }) => {
   const [emojiOpen, setEmojiOpen]  = React.useState(false)
   const [listening, setListening]  = React.useState(false)
   const [text, setText]  = React.useState('')
-  const [list, setList]  = React.useState([{body:'oi', author: '123'}, {body: 'Silas', author: '123'}, {body:'oi oi oi', author: '1234'},{body:'oi', author: '123'}, {body: 'Silas', author: '123'}, {body:'oi oi oi', author: '1234'},{body:'oi', author: '123'}, {body: 'Silas', author: '123'}, {body:'oi oi oi', author: '1234'},{body:'oi', author: '123'}, {body: 'Silas', author: '123'}, {body:'oi oi oi', author: '1234'},{body:'oi', author: '123'}, {body: 'Silas', author: '123'}, {body:'oi oi oi', author: '1234'},{body:'oi', author: '123'}, {body: 'Silas', author: '123'}, {body:'oi oi oi', author: '1234'},{body:'oi', author: '123'}, {body: 'Silas', author: '123'}, {body:'oi oi oi', author: '1234'},{body:'oi', author: '123'}, {body: 'Silas', author: '123'}, {body:'oi oi oi', author: '1234'},{body:'oi', author: '123'}, {body: 'Silas', author: '123'}, {body:'oi oi oi', author: '1234'},{body:'oi', author: '123'}, {body: 'Silas', author: '123'}, {body:'oi oi oi', author: '1234'},{body:'oi', author: '123'}, {body: 'Silas', author: '123'}, {body:'oi oi oi', author: '1234'},{body:'oi', author: '123'}, {body: 'Silas', author: '123'}, {body:'oi oi oi', author: '1234'},{body:'oi', author: '123'}, {body: 'Silas', author: '123'}, {body:'oi oi oi', author: '1234'},{body:'oi', author: '123'}, {body: 'Silas', author: '123'}, {body:'oi oi oi', author: '1234'},{body:'oi', author: '123'}, {body: 'Silas', author: '123'}, {body:'oi oi oi', author: '1234'}])
+  const [list, setList]  = React.useState([])
+  const [users, setUsers]  = React.useState([])
 
+  React.useEffect(() => {
+    setList([])
+    let unsub = api.onChatContent(data.chatId, setList, setUsers)
+
+    return unsub
+  },[data.chatId])
 
   React.useEffect(() => {
     if (body.current.scrollHeight > body.current.offsetHeight) {
       body.current.scrollTop = body.current.scrollHeight - body.current.offsetHeight
     }
-  },[list])
+  }, [list])
+  
+  React.useEffect(() => {
+    input.current.focus()
+  },[])
 
   const handleEmojiClick = (e, emojiObject) => {
     setText(text + emojiObject.emoji)
@@ -47,7 +61,16 @@ export default ({ user }) => {
   }
 
   const handleSendClick = () => {
-    setEmojiOpen(false)
+    if (text) {
+      api.sendMessage(data, user.id, 'text', text, users);
+      setText('');
+      setEmojiOpen(false)
+    }
+  }
+  const handleInputKeyUp = (e) => {
+    if (e.key === 'Enter') {
+      handleSendClick()
+    }
   }
   
   const handleMicClick = () => {
@@ -74,8 +97,8 @@ export default ({ user }) => {
     <div className="chatWindow">
       <div className="chatWindow--header">
         <div className="chatWindow--headerinfo">
-          <img className="chatWindow--avatar" src={'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTPZQ_Z6Jir7-1quljeW8Nea3KQ3uXEVbtQ6w&usqp=CAU'} alt="" />
-          <div className="chatWindow--name">Silas Oliveira</div>
+          <img className="chatWindow--avatar" src={data.image} alt={data.title} />
+          <div className="chatWindow--name">{data?.title}</div>
         </div>
 
         <div className="chatWindow--headerbuttons">
@@ -138,6 +161,8 @@ export default ({ user }) => {
             placeholder="Digite uma mensagem"
             value={text}
             onChange={(e) => setText(e.target.value)}
+            onKeyUp={handleInputKeyUp}
+            ref={input}
           />
             </div>
         <div className="chatWindow--pos">

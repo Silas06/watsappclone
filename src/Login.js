@@ -1,14 +1,17 @@
 import React from 'react'
 import './Login.css'
 
+import LogoGoogle from './assets/images/googe.png'
+
 import api from './api'
 export default ({onReceive}) => {
 
   const handleFacebookLogin = async () => {
-    let result = await api.fbPopup();
+    console.log('sadf')
+    let result = await api.googlePopup();
+    console.log(result + ', Silas')
 
     if (result) {
-      console.log(result)
       onReceive(result.user)
     } else {
       console.log('errou!')
@@ -17,7 +20,9 @@ export default ({onReceive}) => {
 
   return (
     <div className="login">
-      <button onClick={handleFacebookLogin}>Logar com facebook</button>
+      <button onClick={handleFacebookLogin} className="btnLogin">
+        <img src={ LogoGoogle } alt="google" /> Logar com Google
+      </button>
     </div>
   )
 }

@@ -11,30 +11,23 @@ import ChatIntro from './components/ChatIntro'
 import ChatWindow from './components/ChatWindow'
 import NewChat from './components/NewChat'
 import Login from './Login'
+import api from './api'
 
 
 export default () => {
 
   const [showNewChat, setShowNewChat] = React.useState(false)
   const [user, setUser] = useState(null)
-  const [chatList, setChatList] = useState([
-    {
-      chatId: 1,
-      title: 'Silas Oliveiras',
-      image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTPZQ_Z6Jir7-1quljeW8Nea3KQ3uXEVbtQ6w&usqp=CAU'
-    },
-    {
-      chatId: 2,
-      title: 'Sils Oliveira',
-      image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTPZQ_Z6Jir7-1quljeW8Nea3KQ3uXEVbtQ6w&usqp=CAU'
-    },
-    {
-      chatId: 3,
-      title: 'Silas eOliveira',
-      image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTPZQ_Z6Jir7-1quljeW8Nea3KQ3uXEVbtQ6w&usqp=CAU'
-    }
-  ])
+  const [chatList, setChatList] = useState([])
   const [activeChat, setActiveChat] = useState({})
+
+  React.useEffect(() => {
+    if (user !== null) {
+      let onsub = api.onChatList(user.id, setChatList)
+
+      return onsub
+    }
+  },[user])
 
   const handleLogindata = async (u) => {
     let newUser = {
@@ -42,6 +35,7 @@ export default () => {
       name: u.displayName,
       avatar: u.photoURL,
     }
+    await api.addUser(newUser)
     setUser(newUser)
   }
   
@@ -57,6 +51,7 @@ export default () => {
           user={user}
           show={showNewChat}
           setShow={setShowNewChat}
+          setActiveChat={setActiveChat}
         />
         <header>
           <img className="header--avatar" src={user?.avatar} alt="" />
@@ -96,6 +91,7 @@ export default () => {
         {activeChat.chatId !== undefined && (
           <ChatWindow
             user={user}
+            data={activeChat}
           />
         )}
         {activeChat.chatId === undefined && (
