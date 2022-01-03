@@ -86,3 +86,13 @@ header {
 .contentarea {
   flex:1;
 }
+
+@media(max-width: 600px) {
+  .app-window {
+    flex-direction: column;
+  }
+
+  .sidebar {
+  width: 100%;
+}
+}

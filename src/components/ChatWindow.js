@@ -9,13 +9,14 @@ import InsertEmoticonIcon from '@material-ui/icons/InsertEmoticon';
 import CloseIcon from '@material-ui/icons/Close';
 import SendIcon from '@material-ui/icons/Send';
 import MicIcon from '@material-ui/icons/Mic';
+import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 
 import bgMsg from '../assets/images/bgMsg.jpg'
 import MessageItem from './MessageItem'
 
 import api from '../api'
 
-export default ({ user, data }) => {
+export default ({ user, data, handleGoBack }) => {
   
   const body = React.useRef()
   const input = React.useRef()
@@ -117,6 +118,13 @@ export default ({ user, data }) => {
         ref={body}
         className="chatWindow--body"
       >
+        <button
+          onClick={() => handleGoBack()}
+          style={{ backgroundColor: 'transparent', border: 0, marginBottom: 15 }}
+          className="chatWindow--btnBack"
+        >
+          <ArrowBackIcon />
+        </button>
         {list.map((item, k) => (
           <MessageItem
             key={k.toString()}

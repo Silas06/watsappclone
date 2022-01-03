@@ -68,3 +68,10 @@
   font-size: 17px;
   color:black;
 }
+
+@media (max-width: 600px) {
+  .newChat {
+  width: 100%;  
+}
+
+}

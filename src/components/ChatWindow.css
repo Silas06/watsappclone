@@ -102,3 +102,13 @@ aside.emoji-picker-react{
 .emoji-picker-react .emoji-group:before{
   background: none;
 }
+
+.chatWindow--btnBack {
+  display: none;
+}
+
+@media (max-width: 600px) {
+  .chatWindow--btnBack {
+    display: block;
+  }
+}
