@@ -95,9 +95,9 @@
   overflow-y: hidden;
   transition: all ease .3s;
 }
-aside.emoji-picker-react{
-  width: 100%;
-  background: none;
+aside.emoji-picker-react {
+  width: 100%!important;
+  background: none!important;
 }
 .emoji-picker-react .emoji-group:before{
   background: none;
