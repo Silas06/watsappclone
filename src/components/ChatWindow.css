@@ -96,7 +96,7 @@
   transition: all ease .3s;
 }
 aside.emoji-picker-react{
-  width: auto;
+  width: 100%;
   background: none;
 }
 .emoji-picker-react .emoji-group:before{
